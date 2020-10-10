@@ -1,24 +1,41 @@
 import Color from 'color';
 
-/* eslint-disable no-bitwise */
-export function colorHash(input: string | number) {
-  const inputString = input.toString();
+import { getRandomNumber } from './get-random-number';
 
-  let sum = 0;
+enum HexColorTone {
+  Reddish = 'Reddish',
+  Bluish = 'Bluish',
+  Greenish = 'Greenish',
+}
 
-  for (const i of inputString) {
-    sum += i.charCodeAt(0);
+function getRandomHexadecimalNum(): string {
+  const randomNum = getRandomNumber(0, 255);
+  const hexadecimalNum = Math.abs(randomNum).toString(16);
+
+  return hexadecimalNum.length === 1 ? `0${hexadecimalNum}` : hexadecimalNum;
+}
+
+function getRandomHexColor(tone: HexColorTone = HexColorTone.Reddish) {
+  switch (tone) {
+    case HexColorTone.Reddish:
+      return `#FF${getRandomHexadecimalNum()}${getRandomHexadecimalNum()}`;
+    case HexColorTone.Bluish:
+      return `#${getRandomHexadecimalNum()}${getRandomHexadecimalNum()}FF`;
+    case HexColorTone.Greenish:
+      return `#${getRandomHexadecimalNum()}FF${getRandomHexadecimalNum()}`;
+    default:
+      return `#${getRandomHexadecimalNum()}${getRandomHexadecimalNum()}FF`;
   }
+}
 
-  const r = Math.abs(~~(Math.sin(sum + 1) * 256));
-  const g = Math.abs(~~(Math.sin(sum + 2) * 256));
-  const b = Math.abs(~~(Math.sin(sum + 3) * 256));
+export function colorHash(index: number) {
+  let hex =
+    index % 2
+      ? getRandomHexColor(HexColorTone.Reddish)
+      : getRandomHexColor(HexColorTone.Bluish);
 
-  let hex = '#';
-
-  hex += `00${r.toString(16)}`.substr(-2, 2).toUpperCase();
-  hex += `00${g.toString(16)}`.substr(-2, 2).toUpperCase();
-  hex += `00${b.toString(16)}`.substr(-2, 2).toUpperCase();
+  hex =
+    index % 5 || index === 0 ? hex : getRandomHexColor(HexColorTone.Greenish);
 
   return Color(hex).alpha(0.6).string();
 }

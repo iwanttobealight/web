@@ -21,7 +21,7 @@ export const PieChart = <T extends Record<string, any>>({
       datasets: [
         {
           data: data.map((set) => Number(set[valueKey])),
-          backgroundColor: data.map((set) => colorHash(set[nameKey])),
+          backgroundColor: data.map((_, i) => colorHash(i)),
           borderWidth: 0,
         },
       ],
